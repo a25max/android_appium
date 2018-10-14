@@ -1,28 +1,30 @@
 require 'appium_lib'
 
+app_package = "jp.co.nikko_data.japantaxi.dev"
+
 capability = {
   caps: {
-    automationName: 'uiautomator2',
+    automationName: 'UiAutomator2',
     platformName: 'Android',
-    disableWindowAnimation: true,
+    disableWindowAnimation: false,
     deviceName: 'Nexus',
     app: ENV['APP_PATH'] || "./#{Dir['*.apk'].last}",
-    unicodeKeyboard: true,
+    unicodeKeyboard: false,
     newCommandTimeout: 300,
-    appPackage: "jp.co.nikko_data.japantaxi",
-    appActivity: ".activity.SignInActivity",
-    autoGrantPermissions: true
+    appPackage: "#{app_package}",
+    appActivity: "jp.co.nikko_data.japantaxi.activity.SignInActivity"
   }
 }
 
-@driver = Appium::Driver.new(capability, true).start_driver
+@driver = Appium::Driver.new(capability, true)
+@driver.start_driver
+@driver.set_network_connection(2)
 Appium.promote_appium_methods Object
 
-email_address_id = "jp.co.nikko_data.japantaxi:id/email_address"
-password_id = "jp.co.nikko_data.japantaxi:id/password"
-signin_id = "jp.co.nikko_data.japantaxi:id/sign_in"
-find_elements(:id, email_address_id).first.send_keys("carrier@ca.com")
-find_elements(:id, password_id).first.send_keys("asdfasdf")
-find_elements(:id, signin_id).first.click
+# find_element(:id, "com.google.android.gms:id/cancel").click
 
+find_element(:id, "#{app_package}:id/email_address").send_keys("carrier@ca.com")
+find_element(:id, "#{app_package}:id/password").send_keys("asdfasdf")
+find_element(:id, "#{app_package}:id/sign_in").click
+sleep(30)
 @driver.driver_quit
